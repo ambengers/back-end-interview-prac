@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -16,7 +17,7 @@ class ProductTest extends TestCase
         parent::setUp();
     }
 
-    public function test_can_get_product_page(): void
+    public function test_can_get_products_page(): void
     {
         $this->get(route('products.index'))
             ->assertStatus(200)
@@ -44,6 +45,31 @@ class ProductTest extends TestCase
             ]
         )->assertRedirect(route('products.index'))
             ->assertSessionHasErrors(['name' => 'The name has already been taken.']);
+    }
+
+    public function test_can_store_a_product_with_tags_separated_by_comma(): void
+    {
+        $this->post(route('products.store'), $input = [
+                'name' => $this->faker->sentence(),
+                'tags' => 'Tag1, Tag2, Tag3',
+            ]
+        );
+
+        $tagsInput = explode(',', $input['tags']);
+
+        collect($tagsInput)->each(function ($tag) {
+            $this->assertDatabaseHas('tags', ['name' => trim($tag)]);
+        });
+
+        $product = Product::first();
+        $tags = Tag::whereIn('id', $tagsInput)->get();
+
+        $tags->each(function ($tag) use ($product) {
+            $this->assertDatabaseHas('product_tag', [
+                'product_id' => $product->id,
+                'tag_id' => $tag->id
+            ]);
+        });
     }
 
     public function test_can_delete_a_product(): void

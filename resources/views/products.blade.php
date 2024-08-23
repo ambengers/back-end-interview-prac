@@ -1,3 +1,7 @@
+@php
+use App\Models\Product;
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -21,9 +25,9 @@
 
 <h1>Current Products</h1>
 
-@if (\App\Models\Product::all()->count())
+@if (Product::all()->count())
     <ul>
-        @foreach (\App\Models\Product::all() as $product)
+        @foreach (Product::all() as $product)
             <li>
                 {!! $product->name !!}
                 <form action='{{ route('products.destroy', ['id' => $product->id]) }}' method="POST">
