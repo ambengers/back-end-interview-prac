@@ -23,11 +23,12 @@ class ProductTest extends TestCase
             ->assertViewIs('products');
     }
 
-    public function test_can_store_a_product(): void
+    public function test_can_store_a_product_with_description(): void
     {
         $this->post(
             route('products.store'), $input = [
                 'name' => $this->faker->sentence(),
+                'description' => $this->faker->paragraph(),
             ]
         )->assertRedirect(route('products.index'));
 

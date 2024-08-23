@@ -18,12 +18,15 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate(['name' => ['required', 'unique:products,name']]);
+            $request->validate([
+                'name' => ['required', 'unique:products,name'],
+                'description' => ['nullable', 'string'],
+            ]);
         } catch (ValidationException $exception) {
             return Redirect::route('products.index')->withErrors($exception->errors());
         }
 
-        Product::create($request->only(['name']));
+        Product::create($request->only(['name', 'description']));
 
         return Redirect::route('products.index')->with('status', 'The product was saved');
     }
