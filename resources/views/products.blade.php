@@ -1,7 +1,3 @@
-@php
-use App\Models\Product;
-@endphp
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -25,11 +21,17 @@ use App\Models\Product;
 
 <h1>Current Products</h1>
 
-@if (Product::all()->count())
+@if ($products->count())
     <ul>
-        @foreach (Product::all() as $product)
+        @foreach ($products as $product)
             <li>
-                {!! $product->name !!}
+                <h3>{{ $product->name }}</h3>
+                @if($product->description)
+                    <p>Description: {{ $product->description }}</p>
+                @endif
+                @if($product->tags->isNotEmpty())
+                    <p>Tags: {{ $product->tags->implode('name', ', ') }}</p>
+                @endif
                 <form action='{{ route('products.destroy', ['id' => $product->id]) }}' method="POST">
                     @csrf
                     <input type="hidden" name="_method" value="DELETE"/>

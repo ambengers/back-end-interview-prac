@@ -13,7 +13,9 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return view('products');
+        $products = Product::with('tags')->get();
+
+        return view('products', ['products' => $products]);
     }
 
     public function store(Request $request)
@@ -30,11 +32,13 @@ class ProductController extends Controller
 
         $product = Product::create($request->only(['name', 'description']));
 
-        $tags = collect(explode(',', $request->tags))->map(function ($tag) {
-            return Tag::firstOrCreate(['name' => trim($tag)]);
-        });
+        if ($request->tags) {
+            $tags = collect(explode(',', $request->tags))->map(function ($tag) {
+                return Tag::firstOrCreate(['name' => trim($tag)]);
+            });
 
-        $product->tags()->sync($tags);
+            $product->tags()->sync($tags->pluck('id')->toArray());
+        }
 
         return Redirect::route('products.index')->with('status', 'The product was saved');
     }
