@@ -23,7 +23,7 @@ class ProductTest extends TestCase
             ->assertViewIs('products');
     }
 
-    public function test_can_store_product(): void
+    public function test_can_store_a_product(): void
     {
         $this->post(
             route('products.store'), $input = [
@@ -34,7 +34,7 @@ class ProductTest extends TestCase
         $this->assertDatabaseHas('products', $input);
     }
 
-    public function test_can_store_product_with_unique_name(): void
+    public function test_can_store_a_product_with_unique_name(): void
     {
         $product = Product::create(['name' => 'First Product']);
 
@@ -44,4 +44,35 @@ class ProductTest extends TestCase
         )->assertRedirect(route('products.index'))
             ->assertSessionHasErrors(['name' => 'The name has already been taken.']);
     }
+
+    public function test_can_delete_a_product(): void
+    {
+        $product = Product::create(['name' => 'First Product']);
+
+        $this->assertDatabaseHas('products', $product->only('id', 'name'));
+
+        $this->delete(route('products.destroy', ['id' => $product->id]))
+            ->assertRedirect(route('products.index'));
+
+        $this->assertDatabaseMissing('products', $product->only('id', 'name'));
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

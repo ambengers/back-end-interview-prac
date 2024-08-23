@@ -28,9 +28,9 @@ class ProductController extends Controller
         return Redirect::route('products.index')->with('status', 'The product was saved');
     }
 
-    public function delete(Request $request)
+    public function destroy(Request $request, Product $id)
     {
-        DB::delete("DELETE FROM products WHERE id = ".$request->id);
+        $id->forceDelete();
 
         return Redirect::route('products.index')->with('status', 'The product was deleted');
     }
