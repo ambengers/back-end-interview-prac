@@ -1,5 +1,7 @@
 # Back-end Interview Practical
 
+To run tests, use `./vendor/bin/phpunit`
+
 ## Instructions
 
 The website in this repository has many bugs and hasn't been written very well. The parts below are designed to test how you address these problems and add new features.
